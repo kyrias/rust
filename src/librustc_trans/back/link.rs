@@ -962,7 +962,7 @@ fn link_args(cmd: &mut Linker,
         }
     }
 
-    let relro_level = match sess.opts.debugging_opts.relro_level {
+    let relro_level = match sess.opts.cg.relro_level {
         Some(level) => level,
         None => t.options.relro_level,
     };

@@ -1057,6 +1057,8 @@ options! {CodegenOptions, CodegenSetter, basic_codegen_options,
         "`-C save-temps` might not produce all requested temporary products \
          when incremental compilation is enabled.")],
         "save all temporary output files during compilation"),
+    relro_level: Option<RelroLevel> = (None, parse_relro_level, [TRACKED],
+        "choose which RELRO level to use"),
     rpath: bool = (false, parse_bool, [UNTRACKED],
         "set rpath values in libs/exes"),
     overflow_checks: Option<bool> = (None, parse_opt_bool, [TRACKED],
@@ -1281,8 +1283,6 @@ options! {DebuggingOptions, DebuggingSetter, basic_debugging_options,
         "extra arguments to prepend to the linker invocation (space separated)"),
     profile: bool = (false, parse_bool, [TRACKED],
                      "insert profiling code"),
-    relro_level: Option<RelroLevel> = (None, parse_relro_level, [TRACKED],
-        "choose which RELRO level to use"),
     nll: bool = (false, parse_bool, [UNTRACKED],
                  "run the non-lexical lifetimes MIR pass"),
     nll_dump_cause: bool = (false, parse_bool, [UNTRACKED],
@@ -2928,7 +2928,7 @@ mod tests {
         assert!(reference.dep_tracking_hash() != opts.dep_tracking_hash());
 
         opts = reference.clone();
-        opts.debugging_opts.relro_level = Some(RelroLevel::Full);
+        opts.cg.relro_level = Some(RelroLevel::Full);
         assert!(reference.dep_tracking_hash() != opts.dep_tracking_hash());
     }
 }
