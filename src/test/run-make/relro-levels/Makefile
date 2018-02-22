@@ -12,4 +12,10 @@ ifeq ($(UNAME),Linux)
 
 	$(RUSTC) -Crelro-level=partial hello.rs
 	readelf -l $(TMPDIR)/hello | grep -q GNU_RELRO
+
+	# Ensure that we're *not* built with RELRO when setting it to off.  We do
+	# not want to check for BIND_NOW however, as the linker might have that
+	# enabled by default.
+	$(RUSTC) -Crelro-level=off hello.rs
+	! readelf -l $(TMPDIR)/hello | grep -q GNU_RELRO
 endif

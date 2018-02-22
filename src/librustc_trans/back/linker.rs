@@ -105,8 +105,9 @@ pub trait Linker {
     fn add_object(&mut self, path: &Path);
     fn gc_sections(&mut self, keep_metadata: bool);
     fn position_independent_executable(&mut self);
-    fn partial_relro(&mut self);
     fn full_relro(&mut self);
+    fn partial_relro(&mut self);
+    fn no_relro(&mut self);
     fn optimize(&mut self);
     fn debuginfo(&mut self);
     fn no_default_libraries(&mut self);
@@ -179,8 +180,9 @@ impl<'a> Linker for GccLinker<'a> {
     fn output_filename(&mut self, path: &Path) { self.cmd.arg("-o").arg(path); }
     fn add_object(&mut self, path: &Path) { self.cmd.arg(path); }
     fn position_independent_executable(&mut self) { self.cmd.arg("-pie"); }
-    fn partial_relro(&mut self) { self.linker_arg("-z,relro"); }
     fn full_relro(&mut self) { self.linker_arg("-z,relro,-z,now"); }
+    fn partial_relro(&mut self) { self.linker_arg("-z,relro"); }
+    fn no_relro(&mut self) { self.linker_arg("-z,norelro"); }
     fn build_static_executable(&mut self) { self.cmd.arg("-static"); }
     fn args(&mut self, args: &[String]) { self.cmd.args(args); }
 
@@ -439,11 +441,15 @@ impl<'a> Linker for MsvcLinker<'a> {
         // noop
     }
 
+    fn full_relro(&mut self) {
+        // noop
+    }
+
     fn partial_relro(&mut self) {
         // noop
     }
 
-    fn full_relro(&mut self) {
+    fn no_relro(&mut self) {
         // noop
     }
 
@@ -647,11 +653,15 @@ impl<'a> Linker for EmLinker<'a> {
         // noop
     }
 
+    fn full_relro(&mut self) {
+        // noop
+    }
+
     fn partial_relro(&mut self) {
         // noop
     }
 
-    fn full_relro(&mut self) {
+    fn no_relro(&mut self) {
         // noop
     }
 
